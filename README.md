@@ -35,3 +35,7 @@ The default build is linked to HBase 0.94. In order to build for HBase 1.1.0,
 run the following command:
 
     mvn clean install -DskipTests -Dhbase.api=1.1.0
+
+Added hbase version 1.1.2
+
+    mvn clean install -DskipTests -Dhbase.api=1.1.2
