@@ -8,12 +8,15 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.AuthSchemes;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.auth.SPNegoSchemeFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HttpContext;
 import org.apache.solr.client.solrj.impl.HttpClientConfigurer;
+import org.apache.solr.client.solrj.impl.HttpClientUtil;
 import org.apache.solr.common.params.SolrParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +53,20 @@ public class FusionKrb5HttpClientConfigurer extends HttpClientConfigurer {
 
   public Configuration getJaasConfig(){
     return jaasConfig;
+  }
+
+  public static CloseableHttpClient createClient(String fusionPrincipal){
+    if (logger.isDebugEnabled()) {
+      System.setProperty("sun.security.krb5.debug", "true");
+    }
+    if (fusionPrincipal == null) {
+      logger.error("fusion.user (principal) must be set in order to use kerberos!");
+    }
+    HttpClientUtil.setConfigurer(new FusionKrb5HttpClientConfigurer(fusionPrincipal));
+    CloseableHttpClient httpClient = HttpClientUtil.createClient(null);
+    HttpClientUtil.setMaxConnections(httpClient, 500);
+    HttpClientUtil.setMaxConnectionsPerHost(httpClient, 100);
+    return httpClient;
   }
 
   private HttpRequestInterceptor bufferedEntityInterceptor = new HttpRequestInterceptor() {

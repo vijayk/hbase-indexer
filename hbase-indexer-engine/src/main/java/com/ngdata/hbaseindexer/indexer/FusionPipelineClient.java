@@ -121,16 +121,7 @@ public class FusionPipelineClient {
 
     String fusionLoginConf = System.getProperty(FusionKrb5HttpClientConfigurer.LOGIN_CONFIG_PROP);
     if (fusionLoginConf != null && !fusionLoginConf.isEmpty()) {
-      if (log.isDebugEnabled()) {
-        System.setProperty("sun.security.krb5.debug", "true");
-      }
-      if (fusionUser == null) {
-        log.error("fusion.user (principal) must be set in order to use kerberos!");
-      }
-      HttpClientUtil.setConfigurer(new FusionKrb5HttpClientConfigurer(fusionUser));
-      httpClient = HttpClientUtil.createClient(null);
-      HttpClientUtil.setMaxConnections(httpClient, 500);
-      HttpClientUtil.setMaxConnectionsPerHost(httpClient, 100);
+      httpClient = FusionKrb5HttpClientConfigurer.createClient(fusionUser);
       isKerberos = true;
     } else {
       globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.BEST_MATCH).build();
@@ -498,6 +489,7 @@ public class FusionPipelineClient {
       HttpResponse response = null;
       HttpClientContext context = null;
       if (isKerberos) {
+        httpClient = FusionKrb5HttpClientConfigurer.createClient(fusionUser);
         response = httpClient.execute(postRequest);
       } else {
         context = HttpClientContext.create();
@@ -532,6 +524,7 @@ public class FusionPipelineClient {
 
         log.info("Going to re-try request "+requestId+" after session re-established with "+endpoint);
         if (isKerberos) {
+          httpClient = FusionKrb5HttpClientConfigurer.createClient(fusionUser);
           response = httpClient.execute(postRequest);
         } else {
           response = httpClient.execute(postRequest, context);
