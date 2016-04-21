@@ -55,7 +55,7 @@ public class FusionKrb5HttpClientConfigurer extends HttpClientConfigurer {
     return jaasConfig;
   }
 
-  public static CloseableHttpClient createClient(String fusionPrincipal){
+  public static synchronized CloseableHttpClient createClient(String fusionPrincipal){
     if (logger.isDebugEnabled()) {
       System.setProperty("sun.security.krb5.debug", "true");
     }
