@@ -18,7 +18,6 @@ package com.ngdata.hbaseindexer.util.solr;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.invoke.MethodHandles;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,8 +34,6 @@ import org.apache.zookeeper.ZooKeeper;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
@@ -44,7 +41,6 @@ import org.xml.sax.SAXException;
  */
 public class SolrConfigLoader extends SolrResourceLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private ZooKeeper zk;
     private String configZkPath;
 
